@@ -15,6 +15,10 @@ Then, to run, it's just: `./rut1.py`. The script works with both Python 2 and 3.
 
 **Spoiler warning: Running this script will output the probability results for every episode of the season, which will mean you see the final matches! Don't run if you don't want spoilers for that season!**
 
+#### Dependencies
+
+Both Python 2.x and 3.x will work fine, but the script does use Pandas. If you don't have it, run `pip install pandas`. 
+
 #### Credits
 
 The script is entirely my own, but credit is due to Alex of [Are You The One? Math](http://areuthe.blogspot.com/), a great blog which inspired me to make this. Alex uses a program of his own to calculate the odds during each episode, but since he didn't put up his code (or at least I didn't find it), I decided to make it myself.
