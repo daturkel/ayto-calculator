@@ -1,7 +1,11 @@
+#!/usr/bin/env python
+
 from __future__ import division # (python 2 compatibility)
 import pandas as pd
 from itertools import permutations
 import json
+
+# REPLACE s1 WITH s4 TO SWITCH TO SEASON 4
 from s1 import guys, girls, truth_booth, mc
 
 pd.set_option('display.expand_frame_repr', False)
