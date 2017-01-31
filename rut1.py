@@ -5,7 +5,7 @@ import pandas as pd
 from itertools import permutations
 import pickle
 
-# REPLACE s1 WITH s4 TO SWITCH TO SEASON 4
+# REPLACE s1 WITH s4 OR s5 TO SWITCH TO SEASON 4 OR 5
 from s1 import guys, girls, truth_booth, mc
 
 pd.set_option('display.expand_frame_repr', False)
