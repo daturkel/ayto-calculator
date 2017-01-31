@@ -3,6 +3,7 @@
 from __future__ import division # (python 2 compatibility)
 import pandas as pd
 from itertools import permutations
+import pickle
 
 # REPLACE s1 WITH s4 TO SWITCH TO SEASON 4
 from s1 import guys, girls, truth_booth, mc
@@ -15,15 +16,6 @@ pd.set_option('display.expand_frame_repr', False)
 # guess: a set of ten pairings submitted at the end of the episode
 
 length = len(guys)
-
-# initialize dataframe with even odds
-probability = pd.DataFrame([[100.0/length]*length for i in range(length)],columns=girls,index=guys)
-
-# initialize all possible guesses
-remaining_guesses = list(permutations(range(0,length)))
-
-# number of possible guesses
-num_guesses = len(remaining_guesses)
 
 def num_shared(a,b):
     """ count how many pairings are shared between two guesses
@@ -41,12 +33,30 @@ def tally_pairings(remaining_guesses):
             temp[guy][girl] += 1
     return temp
 
-print("{} guesses left\n".format(num_guesses))
+try:
+    with open("rut1.pickle","rb") as f:
+        data = pickle.load(f)
+        resume = data["resume"]
+        remaining_guesses = data["remaining_guesses"]
+        num_guesses = len(remaining_guesses)
+        # re-initialize dataframe
+        probability = pd.DataFrame(tally_pairings(remaining_guesses),columns=girls,index=guys)
+        probability /= num_guesses/100
+except (OSError, IOError) as e:
+    # initialize all possible guesses
+    remaining_guesses = list(permutations(range(0,length)))
+    # number of possible guesses
+    num_guesses = len(remaining_guesses)
+    resume = -1 
+    # initialize dataframe with even odds
+    probability = pd.DataFrame([[100.0/length]*length for i in range(length)],columns=girls,index=guys)
+
+print("{} guess(es) left\n".format(num_guesses))
 print("Probability %")
 print(probability)
 
 # main episode loop
-for i in range(len(mc)): 
+for i in range(resume + 1,len(mc)): 
     # eliminate all guesses that don't fit this episode's truth booth result
     remaining_guesses = [guess for guess in remaining_guesses if 
             (guess[truth_booth[i][0]] == truth_booth[i][1]) == truth_booth[i][2]]
@@ -76,6 +86,6 @@ for i in range(len(mc)):
     print("Probability %")
     print(probability)
 
-
-
-
+resume = len(mc)-1
+with open("rut1.pickle", "wb") as f:
+    pickle.dump({"resume": resume, "remaining_guesses": remaining_guesses}, f)
