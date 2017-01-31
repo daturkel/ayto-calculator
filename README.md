@@ -9,9 +9,9 @@ Each episode, the group gets to send one pair to the "Truth Booth" where they le
 #### Instructions
 With some logic and a spreadsheet, you can usually make a lot of conclusions to help you make informed guesses, but `rut1.py` calculates the probability of each potential couple each episode, both after the truth booth and after the "match ceremony."
 
-I've included the data on the truth booth and match ceremony guesses for both seasons 1 and 4. By default, the script is set to load the season 1 data. To change this, find the line that says `from s1 import guys, girls, truth_booth, mc` and switch `s1` to `s4`.
+I've included the data on the truth booth and match ceremony guesses for both seasons 1 and 4. I am also slowly adding season 5 data as it comes in.
 
-Then, to run, it's just: `./rut1.py`. The script works with both Python 2 and 3.
+To run, simply input `./rut1.py s#`, where `s#` is replaced with the season of your choice (e.g. `s4`). 
 
 **Spoiler warning: Running this script will output the probability results for every episode of the season, which will mean you see the final matches! Don't run if you don't want spoilers for that season!**
 

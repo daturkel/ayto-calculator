@@ -4,9 +4,26 @@ from __future__ import division # (python 2 compatibility)
 import pandas as pd
 from itertools import permutations
 import pickle
+import sys
+import importlib
+from os import listdir
+from os.path import isfile, join
 
-# REPLACE s1 WITH s4 OR s5 TO SWITCH TO SEASON 4 OR 5
-from s1 import guys, girls, truth_booth, mc
+# load correct season based on argument
+try:
+    season = sys.argv[1]
+except IndexError:
+    raise IndexError("No season argument.\nPlease supply a season as an argument, e.g. ~./rut1.py s4")
+try:
+    season_data = importlib.import_module(season)
+except ImportError:
+    seasons = [f for f in listdir(".") if isfile(join(".",f)) and f[-3:] == ".py" and join(".",f) != sys.argv[0]]
+    seasons = ", ".join([f[:-3] for f in seasons]) + "."
+    raise ImportError("There is no season: {}.\nTry one of the following: {}".format(season,seasons))
+guys = season_data.guys
+girls = season_data.girls
+truth_booth = season_data.truth_booth
+mc = season_data.mc
 
 pd.set_option('display.expand_frame_repr', False)
 
@@ -34,7 +51,7 @@ def tally_pairings(remaining_guesses):
     return temp
 
 try:
-    with open("rut1.pickle","rb") as f:
+    with open("{}.pickle".format(season),"rb") as f:
         data = pickle.load(f)
         resume = data["resume"]
         remaining_guesses = data["remaining_guesses"]
@@ -87,5 +104,5 @@ for i in range(resume + 1,len(mc)):
     print(probability)
 
 resume = len(mc)-1
-with open("rut1.pickle", "wb") as f:
+with open("{}.pickle".format(season), "wb") as f:
     pickle.dump({"resume": resume, "remaining_guesses": remaining_guesses}, f)
