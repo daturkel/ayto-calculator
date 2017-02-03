@@ -72,8 +72,6 @@ print("{} guess(es) left\n".format(num_guesses))
 print("Probability %")
 print(probability)
 
-print(resume)
-print(len(mc))
 # main episode loop
 for i in range(resume + 1,len(mc)): 
     # eliminate all guesses that don't fit this episode's truth booth result
@@ -82,7 +80,6 @@ for i in range(resume + 1,len(mc)):
     # update the number of guesses remaining
     num_guesses = len(remaining_guesses)
     print("\nEpisode {}, Truth Booth\n{} guess(es) left\n".format(i+1,num_guesses))
-    
 
     temp = tally_pairings(remaining_guesses)
     # copy tallies to dataframe, then normalize into probabilities
