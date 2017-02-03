@@ -72,6 +72,8 @@ print("{} guess(es) left\n".format(num_guesses))
 print("Probability %")
 print(probability)
 
+print(resume)
+print(len(mc))
 # main episode loop
 for i in range(resume + 1,len(mc)): 
     # eliminate all guesses that don't fit this episode's truth booth result
@@ -103,6 +105,8 @@ for i in range(resume + 1,len(mc)):
     print("Probability %")
     print(probability)
 
-resume = len(mc)-1
+resume = len(mc) - 1
 with open("{}.pickle".format(season), "wb") as f:
     pickle.dump({"resume": resume, "remaining_guesses": remaining_guesses}, f)
+with open("data.pickle".format(season), "wb") as g:
+    pickle.dump(probability,g)
