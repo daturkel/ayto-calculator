@@ -28,10 +28,12 @@ girls = ["Alicia",   #0
 # [guy_index, girl_index, perfect_match?]
 truth_booth = [[3,3,False],
                [0,0,False],
-               [9,1,False]]
+               [9,1,False],
+               [8,10,False]]
 
 # each matching ceremony guess and number of resultant beams
 # [[guy_0_girl, guy_1_girl, ... guy_8_girl, guy_9_girl], number_correct]
 mc = [[[0,7,5,8,2,1,4,6,10,3,9],2],
       [[4,0,8,9,5,1,3,2,6,7,10],0],
-      [[6,4,5,1,2,7,9,0,10,3,8],4]]
+      [[6,4,5,1,2,7,9,0,10,3,8],4],
+      [[2,3,0,1,10,7,6,5,9,4,8],4]]
