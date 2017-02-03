@@ -9,30 +9,10 @@ import importlib
 from os import listdir
 from os.path import isfile, join
 
-# load correct season based on argument
-try:
-    season = sys.argv[1]
-except IndexError:
-    raise IndexError("No season argument.\nPlease supply a season as an argument, e.g. ~./rut1.py s4")
-try:
-    season_data = importlib.import_module(season)
-except ImportError:
-    seasons = [f for f in listdir(".") if isfile(join(".",f)) and f[-3:] == ".py" and join(".",f) != sys.argv[0]]
-    seasons = ", ".join([f[:-3] for f in seasons]) + "."
-    raise ImportError("There is no season: {}.\nTry one of the following: {}".format(season,seasons))
-guys = season_data.guys
-girls = season_data.girls
-truth_booth = season_data.truth_booth
-mc = season_data.mc
-
-pd.set_option('display.expand_frame_repr', False)
-
 # vocab
 # pairing: a guy-girl pair, regardless of whether it's correct
 # perfect match: a correct guy-girl pair
 # guess: a set of ten pairings submitted at the end of the episode
-
-length = len(guys)
 
 def num_shared(a,b):
     """ count how many pairings are shared between two guesses
@@ -49,6 +29,25 @@ def tally_pairings(remaining_guesses):
         for guy, girl in enumerate(matchup):
             temp[guy][girl] += 1
     return temp
+
+# load correct season based on argument
+try:
+    season = sys.argv[1]
+except IndexError:
+    raise IndexError("No season argument.\nPlease supply a season as an argument, e.g. ~./rut1.py s4")
+try:
+    season_data = importlib.import_module(season)
+except ImportError:
+    seasons = [f for f in listdir(".") if isfile(join(".",f)) and f[-3:] == ".py" and join(".",f) != sys.argv[0]]
+    seasons = ", ".join([f[:-3] for f in seasons]) + "."
+    raise ImportError("There is no season: {}.\nTry one of the following: {}".format(season,seasons))
+guys = season_data.guys
+girls = season_data.girls
+truth_booth = season_data.truth_booth
+mc = season_data.mc
+length = len(guys)
+
+pd.set_option('display.expand_frame_repr', False)
 
 try:
     with open("{}.pickle".format(season),"rb") as f:
@@ -67,6 +66,11 @@ except (OSError, IOError) as e:
     resume = -1 
     # initialize dataframe with even odds
     probability = pd.DataFrame([[100.0/length]*length for i in range(length)],columns=girls,index=guys)
+try:
+    with open("data.pickle","rb") as g:
+        historical_probabilities = pickle.load(g)
+except (OSError, IOError) as e:
+    historical_probabilities = [probability]
 
 print("{} guess(es) left\n".format(num_guesses))
 print("Probability %")
@@ -85,6 +89,7 @@ for i in range(resume + 1,len(mc)):
     # copy tallies to dataframe, then normalize into probabilities
     probability = pd.DataFrame(temp,columns=girls,index=guys)
     probability *= 100/num_guesses
+    historical_probabilities.append(probability)
     print("Probability %")
     print(probability)
     
@@ -99,6 +104,7 @@ for i in range(resume + 1,len(mc)):
     # update probability dataframe again
     probability = pd.DataFrame(temp,columns=girls,index=guys)
     probability /= num_guesses/100
+    historical_probabilities.append(probability)
     print("Probability %")
     print(probability)
 
@@ -106,4 +112,4 @@ resume = len(mc) - 1
 with open("{}.pickle".format(season), "wb") as f:
     pickle.dump({"resume": resume, "remaining_guesses": remaining_guesses}, f)
 with open("data.pickle".format(season), "wb") as g:
-    pickle.dump(probability,g)
+    pickle.dump(historical_probabilities, g)
