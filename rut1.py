@@ -49,6 +49,7 @@ length = len(guys)
 
 pd.set_option('display.expand_frame_repr', False)
 
+# check for pickled memoization data
 try:
     with open("{}.pickle".format(season),"rb") as f:
         data = pickle.load(f)
@@ -66,11 +67,16 @@ except (OSError, IOError) as e:
     resume = -1 
     # initialize dataframe with even odds
     probability = pd.DataFrame([[100.0/length]*length for i in range(length)],columns=girls,index=guys)
+
+# check for pickled probability tables from each episode
 try:
-    with open("data.pickle","rb") as g:
-        historical_probabilities = pickle.load(g)
+    with open("hist_{}.pickle".format(season),"rb") as g:
+        data = pickle.load(g)
+        historical_probabilities = data["probs"]
+        historical_num_guesses = data["nums"]
 except (OSError, IOError) as e:
     historical_probabilities = [probability]
+    historical_num_guesses = [num_guesses]
 
 print("{} guess(es) left\n".format(num_guesses))
 print("Probability %")
@@ -90,6 +96,7 @@ for i in range(resume + 1,len(mc)):
     probability = pd.DataFrame(temp,columns=girls,index=guys)
     probability *= 100/num_guesses
     historical_probabilities.append(probability)
+    historical_num_guesses.append(num_guesses)
     print("Probability %")
     print(probability)
     
@@ -105,11 +112,12 @@ for i in range(resume + 1,len(mc)):
     probability = pd.DataFrame(temp,columns=girls,index=guys)
     probability /= num_guesses/100
     historical_probabilities.append(probability)
+    historical_num_guesses.append(num_guesses)
     print("Probability %")
     print(probability)
 
 resume = len(mc) - 1
 with open("{}.pickle".format(season), "wb") as f:
     pickle.dump({"resume": resume, "remaining_guesses": remaining_guesses}, f)
-with open("data.pickle".format(season), "wb") as g:
-    pickle.dump(historical_probabilities, g)
+with open("hist_{}.pickle".format(season), "wb") as g:
+    pickle.dump({"probs": historical_probabilities, "nums": historical_num_guesses}, g)
